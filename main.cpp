@@ -52,7 +52,6 @@ void del(std::string name){
     }
 }
 
-
 stock getStockWithName(std::string name){
     int stringRep=0;
     for (unsigned int i = 0; i < name.length(); i++){
@@ -125,16 +124,53 @@ void import(std::string stockname, std::string filename){
 
 }
 
-void search(std::string name){
-
+void search(stock stockEntry){
+    std::cout << " " << stockEntry.name ;
+    std::cout << " " << stockEntry.date[0] << " ";
+    std::cout << " " << stockEntry.open[0] << " ";
+    std::cout << " " << stockEntry.high[0] << " ";
+    std::cout << " " << stockEntry.close[0] << " ";
+    std::cout << " " << stockEntry.volume[0] << " ";
+    std::cout << " " << stockEntry.adjClose[0] << std::endl;
 }
 
-void plot(){
-
+void plot(stock stockEntry){
+    return;
 }
 
 void save(){
+    std::cout << "Saving File" << std::endl;
 
+    std::ofstream myfile;
+    myfile.open ("savedata.txt");
+
+
+    std::cout << "stocks size" << stocks->size() << std::endl;
+
+    for (int i = 0; i < 17; ++i) {
+        std::cout << "i" << i << std::endl;
+        for (int j = 0; j < stocks[i].size(); ++j) {
+            std::cout << "j" << i << std::endl;
+            myfile << stocks[i][j].name << "\n";
+            myfile << stocks[i][j].wkn << "\n";
+            myfile << stocks[i][j].shorthand << "\n";
+            myfile << "{\n";
+            for (int k = 0; k < 30; ++k) {
+                std::cout << "k" << i << std::endl;
+                myfile << stocks[i][j].date[k] << "\n";
+                myfile << stocks[i][j].open[k] << "\n";
+                myfile << stocks[i][j].high[k] << "\n";
+                myfile << stocks[i][j].close[k] << "\n";
+                myfile << stocks[i][j].volume[k] << "\n";
+                myfile << stocks[i][j].adjClose[k] << "\n";
+            }
+            myfile << "};\n";
+        }
+    }
+
+    myfile.close();
+
+    std::cout << "File Saved" << std::endl;
 }
 
 void load(){
@@ -191,9 +227,15 @@ int main() {
             std::cin >> filename;
             import(stockname, filename);
         }else if (input == "s"){
-            //search();
+            std::string tmp;
+            std::cout << "What stock do you want to search for?" << std::endl;
+            std::cin >> tmp;
+            search(getStockWithName(tmp));
         }else if (input == "p"){
-            plot();
+            std::string tmp;
+            std::cout << "What stock do you want to plot?" << std::endl;
+            std::cin >> tmp;
+            plot(getStockWithName(tmp));
         }else if (input == "sa"){
             save();
         }else if (input == "lo"){
