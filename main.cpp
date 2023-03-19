@@ -66,31 +66,6 @@ stock getStockWithName(std::string name){
         }
     }
 }
-
-void import(){
-
-}
-
-void search(std::string name){
-
-}
-
-void plot(){
-
-}
-
-void save(){
-
-}
-
-void load(){
-
-}
-
-void quit(bool& run){
-    run = false;
-}
-
 std::vector<stock> read_stock_data(std::string filename){
     std::vector<stock> data;
     std::ifstream file(filename);
@@ -141,8 +116,36 @@ std::vector<stock> read_stock_data(std::string filename){
     }
 
     file.close();
+    std::cout << &data;
     return data;
 }
+
+void import(std::string stockname, std::string filename){
+    std::vector<stock> data = read_stock_data(filename);
+
+}
+
+void search(std::string name){
+
+}
+
+void plot(){
+
+}
+
+void save(){
+
+}
+
+void load(){
+
+}
+
+void quit(bool& run){
+    run = false;
+}
+
+
 
 int charVal(char x){
     return (int)x - 87;
@@ -154,8 +157,8 @@ int main() {
 
     std::string input;
 
-    std::string filename = "MSFT.csv";
-    std::vector<stock> data = read_stock_data(filename);
+    //std::string filename = "MSFT.csv";
+
 
     while (run){
         std::cout << "what do you want to do?" << std::endl;
@@ -180,7 +183,13 @@ int main() {
             std::cin >> tmp;
             del(tmp);
         }else if (input == "i"){
-            import();
+            std::string stockname;
+            std::string filename;
+            std::cout << "Input Stockname: ";
+            std::cin >> stockname;
+            std::cout << "Input Filename: ";
+            std::cin >> filename;
+            import(stockname, filename);
         }else if (input == "s"){
             //search();
         }else if (input == "p"){
