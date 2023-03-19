@@ -8,7 +8,7 @@ struct stock{
     std::string name;
     std::string wkn;
     std::string shorthand;
-    std::string date;
+    std::string date[30];
     float open[30];
     float high[30];
     float low[30];
@@ -84,7 +84,7 @@ std::vector<stock> read_stock_data(std::string filename){
         std::string token;
         std::stringstream ss(line);
 
-        getline(ss, row.date, ',');
+        getline(ss, row.date[counter], ',');
         getline(ss, token, ',');
         row.open[counter] = stof(token);
 
@@ -121,6 +121,17 @@ std::vector<stock> read_stock_data(std::string filename){
 
 void import(std::string stockname, std::string filename){
     std::vector<stock> data = read_stock_data(filename);
+    stock stocki = getStockWithName(stockname);
+
+    for(int i = 0; i < data.size(); i++){
+        stocki.date[i] = data[i].date[i];
+        stocki.open[i] = data[i].open[i];
+        stocki.high[i] = data[i].high[i];
+        stocki.low[i] = data[i].low[i];
+        stocki.close[i] = data[i].close[i];
+        stocki.volume[i] = data[i].volume[i];
+        stocki.adjClose[i] = data[i].adjClose[i];
+    }
 
 }
 
@@ -174,6 +185,7 @@ void save(){
 }
 
 void load(){
+
 
 }
 
