@@ -52,6 +52,20 @@ void del(std::string name){
     }
 }
 
+stock getStockWithName(std::string name){
+    int stringRep=0;
+    for (unsigned int i = 0; i < name.length(); i++){
+        stringRep+=(name[i]);
+    }
+
+    int pos = hash(stringRep, 17);
+    for (int i = 0; i < stocks[pos].size(); ++i) {
+        if (name == stocks[pos][i].name){
+            return stocks[pos][i];
+        }
+    }
+}
+
 void import(){
 
 }
@@ -129,8 +143,6 @@ std::vector<stock> read_stock_data(std::string filename){
     return data;
 }
 
-
-
 int charVal(char x){
     return (int)x - 87;
 }
@@ -169,7 +181,7 @@ int main() {
         }else if (input == "i"){
             import();
         }else if (input == "s"){
-            search();
+            //search();
         }else if (input == "p"){
             plot();
         }else if (input == "sa"){
