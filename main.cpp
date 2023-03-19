@@ -3,18 +3,19 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 struct stock{
     std::string name;
     std::string wkn;
     std::string shorthand;
     std::string date[30];
-    float open[30];
-    float high[30];
-    float low[30];
-    float close[30];
-    float adjClose[30];
-    float volume[30];
+    float open[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+    float high[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+    float low[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+    float close[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+    float adjClose[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+    float volume[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 };
 
 std::vector<stock> stocks[17];
@@ -159,35 +160,32 @@ void plot(stock stockEntry){
 }
 
 void save(){
-    std::cout << "Saving File" << std::endl;
-
     std::ofstream myfile;
     myfile.open ("savedata.txt");
-
-
-    std::cout << "stocks size" << stocks->size() << std::endl;
-
     for (int i = 0; i < 17; ++i) {
         for (int j = 0; j < stocks[i].size(); ++j) {
             myfile << stocks[i][j].name << "\n";
             myfile << stocks[i][j].wkn << "\n";
             myfile << stocks[i][j].shorthand << "\n";
-            myfile << "{\n";
             for (int k = 0; k < 30; ++k) {
                 myfile << stocks[i][j].date[k] << "\n";
                 myfile << stocks[i][j].open[k] << "\n";
                 myfile << stocks[i][j].high[k] << "\n";
+                myfile << stocks[i][j].low[k] << "\n";
                 myfile << stocks[i][j].close[k] << "\n";
                 myfile << stocks[i][j].volume[k] << "\n";
                 myfile << stocks[i][j].adjClose[k] << "\n";
             }
-            myfile << "};\n";
         }
     }
 
     myfile.close();
 
     std::cout << "File Saved" << std::endl;
+}
+
+int charVal(char x){
+    return (int)x - 87;
 }
 
 void load(){
@@ -203,14 +201,47 @@ void load(){
             getline (myfile,line);
             std::string shorthand = line;
 
-            add(name, wkn, shorthand);
+            stock tmp = add(name, wkn, shorthand);
 
-            std::cout << line << '\n';
+            for (int i = 0; i < 30; ++i) {
+                getline (myfile,line);
+                std::string date = line;
+                getline (myfile,line);
+                std::string open = line;
+                getline (myfile,line);
+                std::string high = line;
+                getline (myfile,line);
+                std::string low = line;
+                getline (myfile,line);
+                std::string close = line;
+                getline (myfile,line);
+                std::string adjClose = line;
+                getline (myfile,line);
+                std::string volume = line;
+
+                tmp.date[i] = date;
+                tmp.open[i] = std::stof(open);
+                tmp.high[i] = std::stof(high);
+                tmp.low[i] = std::stof(low);
+                tmp.close[i] = std::stof(close);
+                tmp.adjClose[i] = std::stof(adjClose);
+                tmp.volume[i] = std::stof(volume);
+            }
+
+            int stringRep=0;
+            for (unsigned int i = 0; i < tmp.name.length(); i++){
+                stringRep+=charVal(tmp.name[i]);
+            }
+
+            int pos = hash(stringRep, 17);
+            stocks[pos].push_back(tmp);
         }
         myfile.close();
     }else{
         std::cout << "Unable to open file" << std::endl;
     }
+
+    std::cout << "File has been loaded" << std::endl;
 }
 
 void quit(bool& run){
@@ -218,10 +249,6 @@ void quit(bool& run){
 }
 
 
-
-int charVal(char x){
-    return (int)x - 87;
-}
 
 int main() {
     bool run=true;
@@ -233,7 +260,7 @@ int main() {
 
 
     while (run){
-        std::cout << "what do you want to do?" << std::endl;
+        std::cout << "What do you want to do?" << std::endl;
 
         std::cin >> input;
 
