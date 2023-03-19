@@ -38,6 +38,15 @@ stock add(){
     return stocks;
 }
 
+stock add(std::string name, std::string wkn, std::string shorthand){
+    stock stocks;
+    stocks.name=name;
+    stocks.wkn=wkn;
+    stocks.shorthand=shorthand;
+
+    return stocks;
+}
+
 void del(std::string name){
     int stringRep=0;
     for (unsigned int i = 0; i < name.length(); i++){
@@ -159,15 +168,12 @@ void save(){
     std::cout << "stocks size" << stocks->size() << std::endl;
 
     for (int i = 0; i < 17; ++i) {
-        std::cout << "i" << i << std::endl;
         for (int j = 0; j < stocks[i].size(); ++j) {
-            std::cout << "j" << i << std::endl;
             myfile << stocks[i][j].name << "\n";
             myfile << stocks[i][j].wkn << "\n";
             myfile << stocks[i][j].shorthand << "\n";
             myfile << "{\n";
             for (int k = 0; k < 30; ++k) {
-                std::cout << "k" << i << std::endl;
                 myfile << stocks[i][j].date[k] << "\n";
                 myfile << stocks[i][j].open[k] << "\n";
                 myfile << stocks[i][j].high[k] << "\n";
@@ -185,8 +191,26 @@ void save(){
 }
 
 void load(){
+    std::string line;
+    std::ifstream myfile ("savedata.txt");
+    if (myfile.is_open()){
+        while ( getline (myfile,line) ){
+            std::string name = line;
 
+            getline (myfile,line);
+            std::string wkn = line;
 
+            getline (myfile,line);
+            std::string shorthand = line;
+
+            add(name, wkn, shorthand);
+
+            std::cout << line << '\n';
+        }
+        myfile.close();
+    }else{
+        std::cout << "Unable to open file" << std::endl;
+    }
 }
 
 void quit(bool& run){
@@ -220,7 +244,7 @@ int main() {
 
             int stringRep=0;
             for (unsigned int i = 0; i < tmp.name.length(); i++){
-                stringRep+=(tmp.name[i]);
+                stringRep+=charVal(tmp.name[i]);
             }
 
             int pos = hash(stringRep, p);
