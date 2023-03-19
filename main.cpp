@@ -88,7 +88,7 @@ std::vector<stock> read_stock_data(std::string filename){
     std::string line, col;
     getline(file, line); // read header row
 
-    while (getline(file, line)&&counter<30) {
+    while (getline(file, line)) {
 
         stock row;
         std::string token;
@@ -97,7 +97,6 @@ std::vector<stock> read_stock_data(std::string filename){
         getline(ss, row.date[counter], ',');
         getline(ss, token, ',');
         row.open[counter] = stof(token);
-
         // read high
         getline(ss, token, ',');
         row.high[counter] = stof(token);
@@ -112,20 +111,18 @@ std::vector<stock> read_stock_data(std::string filename){
 
         // read volume
         getline(ss, token, ',');
-        row.volume[counter] = stof(token);
+        row.adjClose[counter] = stof(token);
 
         // read adj_close
         getline(ss, token, ',');
-        row.adjClose[counter] = stof(token);
+        row.volume[counter] = stof(token);
 
-        data.push_back(row);
-
-        data.push_back(row);
+        data.insert(data.begin(),row);
         counter++;
+
     }
 
     file.close();
-    std::cout << &data;
     return data;
 }
 
@@ -133,15 +130,16 @@ void import(std::string stockname, std::string filename){
     std::vector<stock> data = read_stock_data(filename);
     stock stocki = getStockWithName(stockname);
 
-    for(int i = 0; i < data.size(); i++){
-        stocki.date[i] = data[i].date[i];
-        stocki.open[i] = data[i].open[i];
-        stocki.high[i] = data[i].high[i];
-        stocki.low[i] = data[i].low[i];
-        stocki.close[i] = data[i].close[i];
-        stocki.volume[i] = data[i].volume[i];
-        stocki.adjClose[i] = data[i].adjClose[i];
+    for(int i = 0; i < 30; i++){
+        stocki.date[i] = data[0].date[i];
+        stocki.open[i] = data[0].open[i];
+        stocki.high[i] = data[0].high[i];
+        stocki.low[i] = data[0].low[i];
+        stocki.close[i] = data[0].close[i];
+        stocki.volume[i] = data[0].volume[i];
+        stocki.adjClose[i] = data[0].adjClose[i];
     }
+
 
 }
 
@@ -288,6 +286,7 @@ int main() {
             std::cin >> stockname;
             std::cout << "Input Filename: ";
             std::cin >> filename;
+            filename="./csv/"+filename;
             import(stockname, filename);
         }else if (input == "s"){
             std::string tmp;
