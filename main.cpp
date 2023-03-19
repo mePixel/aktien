@@ -43,16 +43,37 @@ void load(){
 
 }
 
-void quit(){
-
+void quit(bool& run){
+    run = false;
 }
 
 int main() {
+    bool run=true;
     int p=17;
     stock stocks[p];
+    std::string input;
 
+    while (run){
+        std::cin >> input;
 
+        if (input == "q"){
+            quit(run);
+        }else if (input == "a"){
+            add();
+        }else if (input == "d"){
+            del();
+        }else if (input == "i"){
+            import();
+        }else if (input == "s"){
+            search();
+        }else if (input == "p"){
+            plot();
+        }else if (input == "sa"){
+            save();
+        }else if (input == "lo"){
+            load();
+        }
+    }
 
-    std::cout << "Hello, World!" << std::endl;
     return 0;
 }
