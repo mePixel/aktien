@@ -52,6 +52,7 @@ void del(std::string name){
     }
 }
 
+
 stock getStockWithName(std::string name){
     int stringRep=0;
     for (unsigned int i = 0; i < name.length(); i++){
