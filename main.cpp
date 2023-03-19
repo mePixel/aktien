@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <list>
 #include <vector>
 
 struct stock{
@@ -15,10 +14,11 @@ struct stock{
     float volume[30];
 };
 
+std::vector<stock> stocks[17];
+
 int hash(int k, int p){
     return k%p;
 }//done
-
 
 stock add(){
     stock stocks;
@@ -35,15 +35,25 @@ stock add(){
     return stocks;
 }
 
-void del(){
+void del(std::string name){
+    int stringRep=0;
+    for (unsigned int i = 0; i < name.length(); i++){
+        stringRep+=(name[i]);
+    }
 
+    int pos = hash(stringRep, 17);
+    for (int i = 0; i < stocks[pos].size(); ++i) {
+        if (name == stocks[pos][i].name){
+            stocks[pos].erase(stocks->begin()+i);
+        }
+    }
 }
 
 void import(){
 
 }
 
-void search(){
+void search(std::string name){
 
 }
 
@@ -62,9 +72,9 @@ void load(){
 void quit(bool& run){
     run = false;
 }
-
-std::vector<StockData> read_stock_data(std::string filename){
-    std::vector<StockData> data;
+/*
+std::vector<stock> read_stock_data(std::string filename){
+    std::vector<stock> data;
     std::ifstream file(filename);
 
     if (!file) {
@@ -76,7 +86,7 @@ std::vector<StockData> read_stock_data(std::string filename){
     getline(file, line); // read header row
 
     while (getline(file, line)) {
-        StockData row;
+        stock row;
         std::stringstream ss(line);
 
         getline(ss, row.date, ',');
@@ -98,16 +108,20 @@ std::vector<StockData> read_stock_data(std::string filename){
     file.close();
     return data;
 }
+*/
+
+int charVal(char x){
+    return (int)x - 87;
+}
 
 int main() {
     bool run=true;
     int p=17;
 
-    std::list<stock> stocks[p];
     std::string input;
 
-    std::string filename = "MSFT.csv";
-    std::vector<StockData> data = read_stock_data(filename);
+    //std::string filename = "MSFT.csv";
+    //std::vector<stock> data = read_stock_data(filename);
 
     while (run){
         std::cout << "what do you want to do?" << std::endl;
@@ -118,11 +132,19 @@ int main() {
             quit(run);
         }else if (input == "a"){
             stock tmp = add();
-            int pos = hash(std::stoi(tmp.name), p);
-            stocks[0].push_back(tmp);
-            //add element tmp to linked list and insert it to the stocks array at hashed position
+
+            int stringRep=0;
+            for (unsigned int i = 0; i < tmp.name.length(); i++){
+                stringRep+=(tmp.name[i]);
+            }
+
+            int pos = hash(stringRep, p);
+            stocks[pos].push_back(tmp);
         }else if (input == "d"){
-            del();
+            std::string tmp;
+            std::cout << "What stock do you want to delete?" << std::endl;
+            std::cin >> tmp;
+            del(tmp);
         }else if (input == "i"){
             import();
         }else if (input == "s"){
