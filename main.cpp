@@ -1,11 +1,14 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <sstream>
 
 struct stock{
     std::string name;
     std::string wkn;
     std::string shorthand;
+    std::string date;
     float open[30];
     float high[30];
     float low[30];
@@ -72,10 +75,11 @@ void load(){
 void quit(bool& run){
     run = false;
 }
-/*
+
 std::vector<stock> read_stock_data(std::string filename){
     std::vector<stock> data;
     std::ifstream file(filename);
+    int counter=0;
 
     if (!file) {
         std::cerr << "Error: Could not open file " << filename << std::endl;
@@ -85,30 +89,47 @@ std::vector<stock> read_stock_data(std::string filename){
     std::string line, col;
     getline(file, line); // read header row
 
-    while (getline(file, line)) {
+    while (getline(file, line)&&counter<30) {
+
         stock row;
+        std::string token;
         std::stringstream ss(line);
 
         getline(ss, row.date, ',');
-        ss >> row.open;
-        ss.ignore(); // ignore comma
-        ss >> row.high;
-        ss.ignore(); // ignore comma
-        ss >> row.low;
-        ss.ignore(); // ignore comma
-        ss >> row.close;
-        ss.ignore();
-        ss >> row.volume;
-        ss.ignore();
-        ss >> row.adj_close;
+        getline(ss, token, ',');
+        row.open[counter] = stof(token);
+
+        // read high
+        getline(ss, token, ',');
+        row.high[counter] = stof(token);
+
+        // read low
+        getline(ss, token, ',');
+        row.low[counter] = stof(token);
+
+        // read close
+        getline(ss, token, ',');
+        row.close[counter] = stof(token);
+
+        // read volume
+        getline(ss, token, ',');
+        row.volume[counter] = stof(token);
+
+        // read adj_close
+        getline(ss, token, ',');
+        row.adjClose[counter] = stof(token);
 
         data.push_back(row);
+
+        data.push_back(row);
+        counter++;
     }
 
     file.close();
     return data;
 }
-*/
+
+
 
 int charVal(char x){
     return (int)x - 87;
@@ -120,8 +141,8 @@ int main() {
 
     std::string input;
 
-    //std::string filename = "MSFT.csv";
-    //std::vector<stock> data = read_stock_data(filename);
+    std::string filename = "MSFT.csv";
+    std::vector<stock> data = read_stock_data(filename);
 
     while (run){
         std::cout << "what do you want to do?" << std::endl;
