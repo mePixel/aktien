@@ -15,7 +15,7 @@ struct stock{
     float low[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
     float close[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
     float adjClose[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-    float volume[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+    double volume[30]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 };
 
 std::vector<stock> stocks[17];
@@ -78,6 +78,21 @@ stock getStockWithName(std::string name){
         }
     }
 }
+
+int getStockPosByName(std::string name){
+    int stringRep=0;
+    for (unsigned int i = 0; i < name.length(); i++){
+        stringRep+=(name[i]);
+    }
+
+    int pos = hash(stringRep, 17);
+    for (int i = 0; i < stocks[pos].size(); ++i) {
+        if (name == stocks[pos][i].name){
+            return i;
+        }
+    }
+}
+
 std::vector<stock> read_stock_data(std::string filename){
     std::vector<stock> data;
     std::ifstream file(filename);
@@ -91,9 +106,9 @@ std::vector<stock> read_stock_data(std::string filename){
     std::string line, col;
     getline(file, line); // read header row
 
+    stock row;
     while (getline(file, line)&&counter<30) {
 
-        stock row;
         std::string token;
         std::stringstream ss(line);
 
@@ -114,11 +129,11 @@ std::vector<stock> read_stock_data(std::string filename){
 
         // read adj_close
         getline(ss, token, ',');
-        row.adjClose[counter] = stof(token);
+        row.volume[counter] = stold(token);
 
         // read volume
         getline(ss, token, ',');
-        row.volume[counter] = stof(token);
+        row.adjClose[counter] = stof(token);
 
         data.insert(data.begin(),row);
 
@@ -143,7 +158,16 @@ void import(std::string stockname, std::string filename){
         stocki.volume[i] = data[0].volume[i];
         stocki.adjClose[i] = data[0].adjClose[i];
     }
+    int i = getStockPosByName(stockname);
 
+
+    int stringRep=0;
+    for (unsigned int i = 0; i < stockname.length(); i++){
+        stringRep+=charVal(stockname[i]);
+    }
+    int pos = hash(stringRep, 17);
+
+    stocks[pos].at(i) = stocki;
 
 }
 
@@ -225,7 +249,7 @@ void load(){
                 tmp.low[i] = std::stof(low);
                 tmp.close[i] = std::stof(close);
                 tmp.adjClose[i] = std::stof(adjClose);
-                tmp.volume[i] = std::stof(volume);
+                tmp.volume[i] = std::stold(volume);
             }
 
             int stringRep=0;
