@@ -24,6 +24,9 @@ int hash(int k, int p){
     return k%p;
 }//done
 
+int charVal(char x){
+    return (int)x - 87;
+}
 stock add(){
     stock stocks;
 
@@ -51,7 +54,7 @@ stock add(std::string name, std::string wkn, std::string shorthand){
 void del(std::string name){
     int stringRep=0;
     for (unsigned int i = 0; i < name.length(); i++){
-        stringRep+=(name[i]);
+        stringRep+=charVal(name[i]);
     }
 
     int pos = hash(stringRep, 17);
@@ -65,7 +68,7 @@ void del(std::string name){
 stock getStockWithName(std::string name){
     int stringRep=0;
     for (unsigned int i = 0; i < name.length(); i++){
-        stringRep+=(name[i]);
+        stringRep+=charVal(name[i]);
     }
 
     int pos = hash(stringRep, 17);
@@ -88,7 +91,7 @@ std::vector<stock> read_stock_data(std::string filename){
     std::string line, col;
     getline(file, line); // read header row
 
-    while (getline(file, line)) {
+    while (getline(file, line)&&counter<30) {
 
         stock row;
         std::string token;
@@ -183,9 +186,7 @@ void save(){
     std::cout << "File Saved" << std::endl;
 }
 
-int charVal(char x){
-    return (int)x - 87;
-}
+
 
 void load(){
     std::string line;
