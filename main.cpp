@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <math.h>
 
 struct stock{
     std::string name;
@@ -158,8 +159,8 @@ void import(std::string stockname, std::string filename){
         stocki.volume[i] = data[0].volume[i];
         stocki.adjClose[i] = data[0].adjClose[i];
     }
-    int i = getStockPosByName(stockname);
 
+    int i = getStockPosByName(stockname);
 
     int stringRep=0;
     for (unsigned int i = 0; i < stockname.length(); i++){
@@ -182,7 +183,36 @@ void search(stock stockEntry){
 }
 
 void plot(stock stockEntry){
-    return;
+    float max=0;
+    for (int i = 0; i < 30; ++i) {
+        if(stockEntry.high[i] > max){
+            max = stockEntry.high[i];
+        }
+    }
+
+    float min=max;
+    for (int i = 0; i < 30; ++i) {
+        if(stockEntry.high[i] < min){
+            min = stockEntry.high[i];
+        }
+    }
+
+    std::vector<float> values;
+    for (int i = 0; i < 30; ++i) {
+        values.insert(values.cbegin(), floor(((stockEntry.high[i]-min)/(max-min))*10));
+    }
+
+    for (int i = 10; i >= 0; --i) {
+        for (int j = 0; j < 30; ++j) {
+            if (values[j] >= i){
+                std::cout << "|";
+            }else{
+                std::cout << ".";
+            }
+        }
+        std::cout << std::endl;
+    }
+
 }
 
 void save(){
@@ -209,8 +239,6 @@ void save(){
 
     std::cout << "File Saved" << std::endl;
 }
-
-
 
 void load(){
     std::string line;
@@ -280,10 +308,15 @@ int main() {
 
     std::string input;
 
-    //std::string filename = "MSFT.csv";
-
-
     while (run){
+        std::cout << "a... add entry" << std::endl;
+        std::cout << "d... delete entry" << std::endl;
+        std::cout << "i... import data" << std::endl;
+        std::cout << "s... search for entry by name" << std::endl;
+        std::cout << "p... plot entry" << std::endl;
+        std::cout << "sa... save session" << std::endl;
+        std::cout << "lo... load session" << std::endl;
+        std::cout << "q... quit programm" << std::endl << std::endl;
         std::cout << "What do you want to do?" << std::endl;
 
         std::cin >> input;
@@ -329,6 +362,7 @@ int main() {
         }else if (input == "lo"){
             load();
         }
+        std::cout << std::endl << std::endl << std::endl;
     }
 
     return 0;
