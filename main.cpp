@@ -72,9 +72,9 @@ stock getStockWithName(std::string name){
         stringRep+=charVal(name[i]);
     }
 
-    int pos = hash(stringRep, 17);
+    int pos = hash(stringRep, 17);      //Welcher Vektor im Array
     for (int i = 0; i < stocks[pos].size(); ++i) {
-        if (name == stocks[pos][i].name){
+        if (name == stocks[pos][i].name){       //Element im Vektor mit richtigem Namen
             return stocks[pos][i];
         }
     }
@@ -88,7 +88,7 @@ int getStockPosByName(std::string name){
 
     int pos = hash(stringRep, 17);
     for (int i = 0; i < stocks[pos].size(); ++i) {
-        if (name == stocks[pos][i].name){
+        if (name == stocks[pos][i].name){       //returned den Index von dem Element mit richtigem Namen im Vektor
             return i;
         }
     }
@@ -127,11 +127,10 @@ stock read_stock_data(std::string filename){
         fileArr.insert(fileArr.cbegin(), token);
         getline(ss, token, ',');
         fileArr.insert(fileArr.cbegin(), token);
-        counter++;
     }
 
     counter=0;
-    for (int i = 0; i < 30*7; i+=7) {
+    for (int i = 0; i < 30*7; i+=7) {       //30Tage 7 Einträge pro Tag, deswegen 7er Schritte
         row.date[counter] = fileArr[i+6];
         row.open[counter] = stof(fileArr[i+5]);
         row.high[counter] = stof(fileArr[i+4]);
@@ -185,10 +184,10 @@ stock read_stock_data(std::string filename){
 }
 
 void import(std::string stockname, std::string filename){
-    stock data = read_stock_data(filename);
-    stock stocki = getStockWithName(stockname);
+    stock data = read_stock_data(filename);     //Daten aus csv holen
+    stock stocki = getStockWithName(stockname);     //name, wkn, shorthand holen
 
-    data.name = stocki.name;
+    data.name = stocki.name;        //data wird um fehlende "Attribute" ergänzt
     data.wkn = stocki.wkn;
     data.shorthand = stocki.shorthand;
 
@@ -202,19 +201,19 @@ void import(std::string stockname, std::string filename){
          stocki.adjClose[i] = data.adjClose[i];
      }*/
 
-    int i = getStockPosByName(stockname);   //Holt Platz vom spezifischen Stock
+    int i = getStockPosByName(stockname);   //Holt gesuchtes Element im Vektor mit dem richtigen Namen
 
     int stringRep=0;
-    for (unsigned int i = 0; i < stockname.length(); i++){
+    for (unsigned int i = 0; i < stockname.length(); i++){  //stockname wird zur Zahl gemacht
         stringRep+=charVal(stockname[i]);
     }
-    int pos = hash(stringRep, 17);      //Verschlüsselung des Stockname
+    int pos = hash(stringRep, 17);      //Verschlüsselung des Stockname um Index für richtigen Vektor zu bekommen
 
     stocks[pos].at(i) = data;
 
 }
 
-void search(stock stockEntry){
+void search(stock stockEntry){      //liest die daten des gesuchten Stock aus
     std::cout << " " << stockEntry.name ;
     std::cout << " " << stockEntry.date[0] << " ";
     std::cout << " " << stockEntry.open[0] << " ";
@@ -226,25 +225,25 @@ void search(stock stockEntry){
 
 void plot(stock stockEntry){
     float max=0;
-    for (int i = 0; i < 30; ++i) {
+    for (int i = 0; i < 30; ++i) {      //sucht maximales High eines Stocks innerhalb von 30Tagen
         if(stockEntry.high[i] > max){
             max = stockEntry.high[i];
         }
     }
 
     float min=max;
-    for (int i = 0; i < 30; ++i) {
+    for (int i = 0; i < 30; ++i) {      //sucht minimales High eines Stocks innerhalb von 30Tagen
         if(stockEntry.high[i] < min){
             min = stockEntry.high[i];
         }
     }
 
-    std::vector<float> values;
+    std::vector<float> values;      //Vektor für Balkenanzahl
     for (int i = 0; i < 30; ++i) {
-        values.insert(values.cbegin(), floor(((stockEntry.high[i]-min)/(max-min))*10));
+        values.insert(values.cbegin(), floor(((stockEntry.high[i]-min)/(max-min))*10)); //Rechnung um zu wissen wie viele balken der jeweilige Tag hat
     }
 
-    for (int i = 10; i >= 0; --i) {
+    for (int i = 10; i >= 0; --i) { //printed values vector als balkendiagramm
         for (int j = 0; j < 30; ++j) {
             if (values[j] >= i){
                 std::cout << "|";
@@ -259,9 +258,9 @@ void plot(stock stockEntry){
 
 void save(){
     std::ofstream myfile;
-    myfile.open ("savedata.txt");
+    myfile.open ("savedata.txt");   //erstellt/öffnet savedata.txt
     for (int i = 0; i < 17; ++i) {
-        for (int j = 0; j < stocks[i].size(); ++j) {
+        for (int j = 0; j < stocks[i].size(); ++j) {    //speichert ganze Hashtabelle in der txt
             myfile << stocks[i][j].name << "\n";
             myfile << stocks[i][j].wkn << "\n";
             myfile << stocks[i][j].shorthand << "\n";
@@ -283,9 +282,9 @@ void save(){
     std::cout << "File Saved" << std::endl;
 }
 
-void load(){
+void load(){                //holt sich hashtabelle aus txt und setzt alles auf tmp
     std::string line;
-    std::ifstream myfile ("savedata.txt");
+    std::ifstream myfile ("savedata.txt");  //öffnet savedata.txt
     if (myfile.is_open()){
         while ( getline (myfile,line) ){
             std::string name = line;
@@ -299,7 +298,7 @@ void load(){
             stock tmp = add(name, wkn, shorthand);
 
             for (int i = 0; i < 30; ++i) {
-                getline (myfile,line);
+                getline (myfile,line);      //holt ganze Zeile und speichert sie ins line
                 std::string date = line;
                 getline (myfile,line);
                 std::string open = line;
@@ -375,7 +374,7 @@ int main() {
             }
 
             int pos = hash(stringRep, p);
-            stocks[pos].push_back(tmp);
+            stocks[pos].push_back(tmp);     //neues Element
         }else if (input == "d"){
             std::string tmp;
             std::cout << "What stock do you want to delete?" << std::endl;
