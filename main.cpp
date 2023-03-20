@@ -109,15 +109,16 @@ std::vector<stock> read_stock_data(std::string filename){
         getline(ss, token, ',');
         row.close[counter] = stof(token);
 
-        // read volume
+        // read adj_close
         getline(ss, token, ',');
         row.adjClose[counter] = stof(token);
 
-        // read adj_close
+        // read volume
         getline(ss, token, ',');
         row.volume[counter] = stof(token);
 
         data.insert(data.begin(),row);
+
         counter++;
 
     }
