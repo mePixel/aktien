@@ -282,7 +282,7 @@ void save(){
     std::cout << "File Saved" << std::endl;
 }
 
-void load(){                //holt sich hashtabelle aus txt und setzt alles auf tmp
+void load(){      //holt sich hashtabelle aus txt und setzt alles auf tmp
     std::string line;
     std::ifstream myfile ("savedata.txt");  //öffnet savedata.txt
     if (myfile.is_open()){
