@@ -143,7 +143,7 @@ stock read_stock_data(std::string filename){
         data.push_back(row);
     }
 
-    std::cout << "nvdsjkl " << counter;
+
 
     /*
     while (getline(file, line)&&counter<30) {
@@ -188,25 +188,29 @@ void import(std::string stockname, std::string filename){
     stock data = read_stock_data(filename);
     stock stocki = getStockWithName(stockname);
 
-    for(int i = 0; i < 30; i++){
-        stocki.date[i] = data.date[i];
-        stocki.open[i] = data.open[i];
-        stocki.high[i] = data.high[i];
-        stocki.low[i] = data.low[i];
-        stocki.close[i] = data.close[i];
-        stocki.volume[i] = data.volume[i];
-        stocki.adjClose[i] = data.adjClose[i];
-    }
+    data.name = stocki.name;
+    data.wkn = stocki.wkn;
+    data.shorthand = stocki.shorthand;
 
-    int i = getStockPosByName(stockname);
+    /* for(int i = 0; i < 30; i++){
+         stocki.date[i] = data.date[i];
+         stocki.open[i] = data.open[i];
+         stocki.high[i] = data.high[i];
+         stocki.low[i] = data.low[i];
+         stocki.close[i] = data.close[i];
+         stocki.volume[i] = data.volume[i];
+         stocki.adjClose[i] = data.adjClose[i];
+     }*/
+
+    int i = getStockPosByName(stockname);   //Holt Platz vom spezifischen Stock
 
     int stringRep=0;
     for (unsigned int i = 0; i < stockname.length(); i++){
         stringRep+=charVal(stockname[i]);
     }
-    int pos = hash(stringRep, 17);
+    int pos = hash(stringRep, 17);      //Verschlüsselung des Stockname
 
-    stocks[pos].at(i) = stocki;
+    stocks[pos].at(i) = data;
 
 }
 
@@ -267,8 +271,9 @@ void save(){
                 myfile << stocks[i][j].high[k] << "\n";
                 myfile << stocks[i][j].low[k] << "\n";
                 myfile << stocks[i][j].close[k] << "\n";
-                myfile << stocks[i][j].volume[k] << "\n";
                 myfile << stocks[i][j].adjClose[k] << "\n";
+                myfile << stocks[i][j].volume[k] << "\n";
+
             }
         }
     }
@@ -345,7 +350,7 @@ int main() {
     int p=17;
 
     std::string input;
-
+    std::cout << std::fixed;
     while (run){
         std::cout << "a... add entry" << std::endl;
         std::cout << "d... delete entry" << std::endl;
