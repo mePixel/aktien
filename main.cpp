@@ -94,20 +94,58 @@ int getStockPosByName(std::string name){
     }
 }
 
-std::vector<stock> read_stock_data(std::string filename){
+stock read_stock_data(std::string filename){
     std::vector<stock> data;
     std::ifstream file(filename);
+    stock row;
     int counter=0;
 
     if (!file) {
         std::cerr << "Error: Could not open file " << filename << std::endl;
-        return data;
+        return row;
     }
 
     std::string line, col;
     getline(file, line); // read header row
 
-    stock row;
+    std::vector<std::string> fileArr;
+
+    while(getline(file, line)){
+        std::string token;
+        std::stringstream ss(line);
+        getline(ss, token, ',');
+        fileArr.insert(fileArr.cbegin(), token);
+        getline(ss, token, ',');
+        fileArr.insert(fileArr.cbegin(), token);
+        getline(ss, token, ',');
+        fileArr.insert(fileArr.cbegin(), token);
+        getline(ss, token, ',');
+        fileArr.insert(fileArr.cbegin(), token);
+        getline(ss, token, ',');
+        fileArr.insert(fileArr.cbegin(), token);
+        getline(ss, token, ',');
+        fileArr.insert(fileArr.cbegin(), token);
+        getline(ss, token, ',');
+        fileArr.insert(fileArr.cbegin(), token);
+        counter++;
+    }
+
+    counter=0;
+    for (int i = 0; i < 30*7; i+=7) {
+        row.date[counter] = fileArr[i+6];
+        row.open[counter] = stof(fileArr[i+5]);
+        row.high[counter] = stof(fileArr[i+4]);
+        row.low[counter] = stof(fileArr[i+3]);
+        row.close[counter] = stof(fileArr[i+2]);
+        row.volume[counter] = stold(fileArr[i+1]);
+        row.adjClose[counter] = stof(fileArr[i]);
+        counter++;
+        data.push_back(row);
+    }
+
+    std::cout << "nvdsjkl " << counter;
+
+    /*
     while (getline(file, line)&&counter<30) {
 
         std::string token;
@@ -140,24 +178,24 @@ std::vector<stock> read_stock_data(std::string filename){
 
         counter++;
 
-    }
+    }*/
 
     file.close();
-    return data;
+    return row;
 }
 
 void import(std::string stockname, std::string filename){
-    std::vector<stock> data = read_stock_data(filename);
+    stock data = read_stock_data(filename);
     stock stocki = getStockWithName(stockname);
 
     for(int i = 0; i < 30; i++){
-        stocki.date[i] = data[0].date[i];
-        stocki.open[i] = data[0].open[i];
-        stocki.high[i] = data[0].high[i];
-        stocki.low[i] = data[0].low[i];
-        stocki.close[i] = data[0].close[i];
-        stocki.volume[i] = data[0].volume[i];
-        stocki.adjClose[i] = data[0].adjClose[i];
+        stocki.date[i] = data.date[i];
+        stocki.open[i] = data.open[i];
+        stocki.high[i] = data.high[i];
+        stocki.low[i] = data.low[i];
+        stocki.close[i] = data.close[i];
+        stocki.volume[i] = data.volume[i];
+        stocki.adjClose[i] = data.adjClose[i];
     }
 
     int i = getStockPosByName(stockname);
